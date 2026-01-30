@@ -6,11 +6,13 @@ const userSlice = createSlice({
         authUser: null,
         otherUsers: null,
         selectedUser:null,
-        onlineUser:null
+        onlineUser:null,
+        token : ''
     },
     reducers: {
         setAuthuser: (state, action) => {
             state.authUser = action.payload
+            state.token = action.payload.Token
         },
         setOtherUser: (state, action) => {
             state.otherUsers = action.payload;
@@ -20,8 +22,13 @@ const userSlice = createSlice({
         },
         setOnlineusers: (state,action)=>{
             state.onlineUser = action.payload
+        },
+        logoutSuccess:(state,action)=>{
+            state.token = '';
+            // localStorage.removeItem('persist:root');
+            localStorage.clear();
         }
     }
 });
-export const { setAuthuser, setOtherUser,setselectedUser,setOnlineusers } = userSlice.actions
+export const { setAuthuser, setOtherUser,setselectedUser,setOnlineusers,logoutSuccess } = userSlice.actions
 export default userSlice.reducer

@@ -24,7 +24,8 @@ const rootReducer = combineReducers({
     user: userReducer,
     message: messageReducer,
     socket: socketReducer
-})
+});
+
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const store = configureStore({
@@ -34,11 +35,11 @@ const store = configureStore({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             },
-                    serializableCheck: false,
+            serializableCheck: false,
         }),
-    // middleware: (getDefaultMiddleware) =>
-    //     getDefaultMiddleware({
-    //     }),
 });
 
+// Create a persistor
+export const persistor = persistStore(store);
+// Export the store
 export default store;

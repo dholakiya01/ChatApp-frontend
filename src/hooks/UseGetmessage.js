@@ -1,34 +1,25 @@
+import axiosInstance from '@/app/_api/interseptor';
+import { Getmessages } from '@/app/_api/messages';
 import { setMessages } from '@/redux/messageSlice';
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
 const UseGetmessages = async () => {
-    const { selectedUser } = useSelector(store => store.user)
-    const dispatch = useDispatch()
-    // console.log(selectedUser, "selectedUser.....");
-    
+    const { selectedUser } = useSelector(store => store.user);
+    const token = useSelector((state)=>state.user.token)
+    const dispatch = useDispatch();
+    const [isLoading,SetLoading] = useState(false)    
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        // console.log(token,"token");
         const fetchMessages = async () => {
             try {
                 axios.defaults.withCredentials = true;
-                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/message/${selectedUser?._id}`,
-                    {},
-                    {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: localStorage.getItem('token')
-                    },
-                    withCredentials: true
-                });
-                console.log(response,"responmse");
-                dispatch(setMessages(response.data))
-                // console.log(response.data.data, "message response");
+                const response = await Getmessages(selectedUser,token)
+                dispatch(setMessages(response?.data || ''))
             } catch (error) {
-                console.log(error, "Error message");
+                toast.error(error?.response?.data?.msg);
             }
         }
         fetchMessages()

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { format } from 'date-fns';
+import { capitalizeFirstLetter } from '@/common';
 
 const SignleMsg = ({ message }) => {
-    // console.log(message,"sadsad");
     const scroll = useRef();
     const { authUser } = useSelector(store => store.user);
 
@@ -24,7 +24,7 @@ const SignleMsg = ({ message }) => {
                     </div>
                 </div>
                 <div className="chat-header">
-                    {authUser?._id === message?.senderId ? authUser?.fullName : selectedUser?.fullName} &nbsp;
+                    {authUser?._id === message?.senderId ? capitalizeFirstLetter(authUser?.fullName) : capitalizeFirstLetter(selectedUser?.fullName)} &nbsp;
                     <time className="text-xs text-white opacity-100">{displayDateTime}</time>
                 </div>
                 <div className={`${authUser?._id === message?.senderId ? "chat-bubble chat-end-color" : 'chat-bubble chat-start-color'}`}>

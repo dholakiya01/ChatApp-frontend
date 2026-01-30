@@ -2,13 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+*{
+  box-sizing: border-box;
+}
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex;
+  justify-content: center; */
+  /* align-items: center; */
   height: 100vh;
   background-color: #000000 !important;
-  background-image: url('../../public/bg-1.jpg');
+  /* background-image: url('../../public/bg-1.jpg'); */
   background-size: cover !important;
   background-repeat: no-repeat;
 }
@@ -56,4 +59,19 @@ body {
 ::-webkit-scrollbar-thumb{
   background-color: #fff;
   border-radius: 10px;
+}
+
+/* optional: nicer thin custom scrollbar for user list */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100,100,100,0.18);
+  border-radius: 999px;
+}
+/* make divider subtle; if you don't use a component library for .divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(148,163,184,0.12), transparent);
 }

@@ -1,44 +1,34 @@
 'use client'
 import { setAuthuser } from '@/redux/userSlice'
-import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useDispatch } from 'react-redux'
-
+import { useDispatch } from 'react-redux';
+import { useForm, SubmitHandler } from "react-hook-form";
+import { loginuser } from '../_api/user'
 
 const Login = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { register, handleSubmit, watch, formState: { errors }, } = useForm();
 
   const [user, setUser] = useState({
     username: "",
     password: "",
   });
 
-  const router = useRouter();
-  const dispatch = useDispatch()
-
-  const Onsubmithandler = async (e) => {
-    console.log(user);
-    e.preventDefault();
+  const Onsubmithandler = async (data) => {
     try {
-
-      const resposnse = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, user, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        withCredentials: true
-      });
+      const resposnse = await loginuser(data)
       if (resposnse.status === 200) {
         toast.success(resposnse.data.msg);
         router.push('/');
-        
         dispatch(setAuthuser(resposnse.data));
-        localStorage.setItem('token',resposnse.data.Token)
+        localStorage.setItem('token', resposnse.data.Token)
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.response.data.msg)
+      toast.error(error.response.data.msg || 'Something went wrong')
     }
     setUser({
       username: "",
@@ -47,35 +37,48 @@ const Login = () => {
   }
 
   return (
-    <div className='min-w-96 mx-auto'>
-      <div className='signup-box h-full w-full bg-pink-900 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100'>
-        <h1 className='title'>Login</h1>
-        <form className='mt-3' onSubmit={Onsubmithandler}>
-          <label className="input input-bordered flex items-center gap-2">
-            <input
-              value={user.username}
-              onChange={(e) => setUser({ ...user, username: e.target.value })}
-              type="email"
-              className="grow"
-              placeholder="username" />
-          </label>
-          <label className="input input-bordered flex items-center gap-2">
-            <input
-              value={user.password}
-              onChange={(e) => setUser({ ...user, password: e.target.value })}
-              type="password"
-              placeholder="password"
-              className="grow" />
-          </label>
-          <div className='my-5'>
-            <p className='text-center'>Don't have an account? <Link to='/signup' href={'/signup'} className='text-blue-500'>signup</Link> </p>
+    <section className="bg-gray-50 dark:bg-gray-900">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:h-screen md:h-screen lg:py-0">
+        <Link href="/" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+          <img className="w-8 h-8 mr-2" src='../../../logo.svg' alt="logo" />
+          Gooter
+        </Link>
+        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              Sign in to your account
+            </h1>
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(Onsubmithandler)}>
+              <div>
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                <input type="email" {...register('username', { required: 'Please enter you valid Email address.' })}  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="" />
+                {errors.username && <p className="text-red-500">{errors.username.message}</p>}
+              </div>
+              <div>
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                <input type="password"{...register('password', { required: 'Please enter you valid password.' })} name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" />
+              </div>
+              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+              <div className="flex items-center justify-between">
+                <div className="flex items-start">
+                  <div className="flex items-center h-5">
+                    <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="" />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
+                  </div>
+                </div>
+                {/* <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a> */}
+              </div>
+              <button type="submit" className="w-full text-white py-2.5 text-center bg-chat-primary rounded-md">Sign in</button>
+              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                Don’t have an account yet? <Link href={'/signup'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</Link>
+              </p>
+            </form>
           </div>
-          <div>
-            <button type='submit' className="btn btn-success">Login</button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
 
