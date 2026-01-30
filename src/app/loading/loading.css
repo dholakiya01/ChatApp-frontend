@@ -1,0 +1,26 @@
+img {
+  width: 125px;
+}
+
+body {
+  text-align: center;
+}
+
+#loading {
+  animation: rotate 0.1s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg)
+  }
+  /* 40% {
+    transform: rotate(90deg)
+  }
+  60% {
+    transform: rotate(270deg)
+  } */
+  100% {
+    transform: rotate(360deg)
+  }
+}
